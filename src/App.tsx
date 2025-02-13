@@ -1,35 +1,63 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState } from "react";
+import axios from "axios";
+import "./App.css";
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [description, setDescription] = useState("");
+  const [price, setPrice] = useState("");
+  const [recommendations, setRecommendations] = useState([]);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await axios.post("http://127.0.0.1:5000/recommend", {
+        description: description,
+        price: price,
+      });
+      setRecommendations(response.data);
+    } catch (error) {
+      console.error("Error fetching recommendations:", error);
+    }
+  };
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <div>
+      <h1>Cheaper Product Recommender</h1>
+      <form onSubmit={handleSubmit}>
+        <div>
+          <label>Product Description:</label>
+          <input
+            type="text"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            required
+          />
+        </div>
+        <div>
+          <label>Product Price:</label>
+          <input
+            type="number"
+            value={price}
+            onChange={(e) => setPrice(e.target.value)}
+            required
+          />
+        </div>
+        <button type="submit">Find Cheaper Alternatives</button>
+      </form>
+
+      <h2>Recommendations</h2>
+      <ul>
+        {recommendations.map((product, index) => (
+          <li key={index}>
+            <h3>{product.name}</h3>
+            <p>{product.description}</p>
+            <p>Price: {product.price.toFixed(2)}</p>
+            <p>Similarity: {product.similarity.toFixed(2)}</p>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
 }
 
-export default App
+export default App;

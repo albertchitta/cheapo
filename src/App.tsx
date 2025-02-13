@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import axios from "axios";
 import "./App.css";
 
@@ -21,7 +21,7 @@ function App() {
   };
 
   return (
-    <div>
+    <div className="App">
       <h1>Cheaper Product Recommender</h1>
       <form onSubmit={handleSubmit}>
         <div>
@@ -51,8 +51,11 @@ function App() {
           <li key={index}>
             <h3>{product.name}</h3>
             <p>{product.description}</p>
-            <p>Price: {product.price.toFixed(2)}</p>
+            <p>Price: ${product.price.toFixed(2)}</p>
             <p>Similarity: {product.similarity.toFixed(2)}</p>
+            <a href={product.url} target="_blank" rel="noopener noreferrer">
+              Buy Now
+            </a>
           </li>
         ))}
       </ul>
